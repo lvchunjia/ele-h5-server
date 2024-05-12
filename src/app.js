@@ -12,6 +12,25 @@ server.use(middlewares);
 
 server.use(JSONServer.bodyParser);
 
+server.use((req, res, next) => {
+  const json = res.json.bind(res);
+  res.success = (data) => {
+    json({
+      code: 0,
+      msg: "请求成功",
+      data,
+    });
+  };
+  res.fail = (msg, code = -1, data) => {
+    json({
+      code,
+      msg,
+      data,
+    });
+  };
+  next();
+});
+
 router(server);
 const jsonRouter = JSONServer.router(db);
 server.use("/api", jsonRouter);
